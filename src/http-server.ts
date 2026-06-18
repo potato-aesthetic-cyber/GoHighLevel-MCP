@@ -296,6 +296,20 @@ class GHLMCPHttpServer {
    * Setup HTTP routes
    */
   private setupRoutes(): void {
+    // Mock OAuth endpoints for Claude.ai MCP connector compatibility
+this.app.get('/authorize', (req: express.Request, res: express.Response) => {
+  const redirectUri = req.query.redirect_uri as string;
+  const state = req.query.state as string;
+  res.redirect(`${redirectUri}?code=mock_code&state=${state}`);
+});
+
+this.app.post('/token', (req: express.Request, res: express.Response) => {
+  res.json({
+    access_token: 'mock_token',
+    token_type: 'bearer',
+    expires_in: 86400
+  });
+});
     // Health check endpoint
     this.app.get('/health', (req, res) => {
       res.json({ 
